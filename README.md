@@ -11,9 +11,9 @@ For this run following commands in the terminals:
 2. CREATE DATABASE youtube_db;
 3. Extensions==> cylinder icon in sidbar===>Known as Sql tools===> click on postgres.
 4. Configure the following as:
-![Configuration Setup](Images/configuration.png)
+![Configuration Setup](Images/Configuration.png)
 
 **Note: Username was not assigned at the time of docker intialization, but password was given as: postgres. so, let use same string as both username and password.
 
 5. Scroll down and click "SAVE CONNECTION" and then click "CONNECT NOW".
-6. 
+
