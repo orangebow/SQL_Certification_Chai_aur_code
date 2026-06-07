@@ -1,0 +1,92 @@
+-- ! RANKING WINDOW FUNCTION:
+-- ? ROW_NUMBER(), RANK(), DENSE_RANK() are some of the useful function.
+
+INSERT INTO exam_scores
+(student_id, subject, score, exam_month) VALUES
+(7, 'English', 94, '2024-11'),
+(7, 'History', 95, '2024-11'),
+(5, 'Math', 50, '2024-09'),
+(5, 'SQL', 50, '2024-10'),
+(5, 'English', 100, '2024-10');
+
+
+SELECT
+    e.student_id,
+    s.name, 
+    s.branch,
+    SUM(score) AS total_Score
+    From exam_scores as e
+INNER JOIN students as s on s.student_id = e.student_id
+GROUP BY e.student_id, s.name, s.branch;
+
+
+--using ROW_NUMBER:
+SELECT
+    e.student_id,
+    s.name, 
+    s.branch,
+    SUM(score) AS total_Score,
+    ROW_NUMBER() OVER(
+        PARTITION BY s.branch
+        ORDER BY SUM(e.score) DESC
+        ) AS row_num
+    From exam_scores as e
+INNER JOIN students as s on s.student_id = e.student_id
+GROUP BY e.student_id, s.name, s.branch;
+
+
+--copy above sql and applY RANK()
+--TO solve the issue:
+--Rahul and Arjun has same score but ranked differently.
+--To solve this :
+Apply following function:
+RANK() OVER(
+    PARTITION BY s.branch,
+    ORDER BY SUM(e.score) DESC
+)
+
+
+SELECT
+    e.student_id,
+    s.name, 
+    s.branch,
+    SUM(score) AS total_Score,
+    ROW_NUMBER() OVER
+    (
+        PARTITION BY s.branch
+        ORDER BY SUM(e.score) DESC
+    ) AS row_num,
+    RANK() OVER
+    (
+    PARTITION BY s.branch
+    ORDER BY SUM(e.score) DESC
+    ) AS rank_num
+    From exam_scores as e
+INNER JOIN students as s on s.student_id = e.student_id
+GROUP BY e.student_id, s.name, s.branch;
+
+
+--DENSE_RANK() to assign Rohan the third Rank.
+SELECT
+    e.student_id,
+    s.name, 
+    s.branch,
+    SUM(score) AS total_Score,
+    ROW_NUMBER() OVER
+    (
+        PARTITION BY s.branch
+        ORDER BY SUM(e.score) DESC
+    ) AS row_num,
+    RANK() OVER
+    (
+    PARTITION BY s.branch
+    ORDER BY SUM(e.score) DESC
+    ) AS rank_num,
+    DENSE_RANK() OVER
+    (
+    PARTITION BY s.branch
+    ORDER BY SUM(e.score) DESC
+    ) AS dense_rank_num
+    From exam_scores as e
+INNER JOIN students as s on s.student_id = e.student_id
+GROUP BY e.student_id, s.name, s.branch;
